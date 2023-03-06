@@ -43,14 +43,18 @@ defmodule Slip.RoomServer do
     channels = Enum.map(1..50, &"room:#{&1}")
 
     channels
-    |> Enum.reduce(socket, fn topic, socket ->
-      case rejoin(socket, topic) do
-        {:ok, new_socket} -> new_socket
-        {:error, :never_joined} -> join(socket, topic)
-      end
+    |> Enum.with_index()
+    |> Enum.each(fn {topic, _index} ->
+      # Our hack: Process.send_after(self(), {:join, topic}, index * 1000)
+      send(self(), {:join, topic})
     end)
 
     {:ok, assign(socket, connected: true)}
+  end
+
+  def handle_info({:join, topic}, socket) do
+    Logger.info("Joining #{topic}...")
+    {:noreply, join(socket, topic)}
   end
 
   @impl Slipstream
