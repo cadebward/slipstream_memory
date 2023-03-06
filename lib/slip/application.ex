@@ -15,9 +15,10 @@ defmodule Slip.Application do
       # Start Finch
       {Finch, name: Slip.Finch},
       # Start the Endpoint (http/https)
-      SlipWeb.Endpoint
+      SlipWeb.Endpoint,
       # Start a worker by calling: Slip.Worker.start_link(arg)
       # {Slip.Worker, arg}
+      Slip.RoomServer
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
